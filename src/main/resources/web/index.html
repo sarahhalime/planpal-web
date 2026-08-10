@@ -3,63 +3,149 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#33578f">
+<meta name="theme-color" content="#306399">
 <title>PlanPal</title>
 <link rel="stylesheet" href="/style.css">
 </head>
 <body>
 
 <header id="topbar">
-  <div class="brand">
-    <span class="mark">P</span>
-    <span>PlanPal</span>
+  <div class="brand"><span class="mark">P</span><span>PlanPal</span></div>
+  <div class="topactions">
+    <button id="help-btn" class="icon" title="Help" aria-label="Help" hidden>?</button>
+    <button id="profile-btn" class="icon" title="Profile" aria-label="Profile" hidden>&#128100;</button>
+    <button id="signout" class="link" hidden>Logout</button>
   </div>
-  <button id="signout" class="link" hidden>Sign out</button>
 </header>
 
 <main id="main">
 
+  <!-- ------------------------------------------------------------ login -->
   <section id="login-screen" class="screen">
     <div class="card login-card">
       <h1>Welcome back</h1>
       <p class="muted">Sign in to keep planning.</p>
       <label for="username">Username</label>
-      <input id="username" autocapitalize="none" autocomplete="username" inputmode="text">
+      <input id="username" autocapitalize="none" autocomplete="username">
       <label for="password">Password</label>
       <div class="password-row">
         <input id="password" type="password" autocomplete="current-password">
-        <button id="reveal" class="ghost" type="button" aria-label="Show password">Show</button>
+        <button class="ghost reveal" type="button" data-for="password">Show</button>
       </div>
       <p id="login-error" class="error" hidden></p>
       <button id="signin" class="primary">Log In</button>
+      <p class="switch">New to PlanPal? <button id="to-signup" class="link">Sign up</button></p>
     </div>
   </section>
 
+  <!-- ----------------------------------------------------------- signup -->
+  <section id="signup-screen" class="screen" hidden>
+    <div class="card login-card">
+      <h1>Create your account</h1>
+      <p class="muted">Start planning events with your friends.</p>
+      <label for="su-username">Choose username</label>
+      <input id="su-username" autocapitalize="none">
+      <label for="su-display">Enter display name</label>
+      <input id="su-display">
+      <label for="su-email">Enter email</label>
+      <input id="su-email" type="email" autocapitalize="none" inputmode="email">
+      <label for="su-password">Choose password</label>
+      <div class="password-row">
+        <input id="su-password" type="password" autocomplete="new-password">
+        <button class="ghost reveal" type="button" data-for="su-password">Show</button>
+      </div>
+      <div id="strength" class="strength" hidden>
+        <div class="bars"><i></i><i></i><i></i></div>
+        <ul id="rules" class="rules"></ul>
+      </div>
+      <p id="signup-error" class="error" hidden></p>
+      <button id="signup" class="primary">Sign up</button>
+      <p class="switch">Already have an account? <button id="to-login" class="link">Go to Login</button></p>
+    </div>
+  </section>
+
+  <!-- ----------------------------------------------------------- events -->
   <section id="events-screen" class="screen" hidden>
-    <h1 id="greeting"></h1>
+    <div class="panel-head">
+      <h1 id="greeting"></h1>
+      <button id="new-event" class="add" aria-label="Create event">+</button>
+    </div>
     <p class="muted" id="event-count"></p>
+
+    <div id="event-form" class="card panel" hidden>
+      <h2 class="panel-title" id="event-form-title">Create Event</h2>
+      <label for="ev-name">Event name</label>
+      <input id="ev-name">
+      <label for="ev-desc">Description</label>
+      <input id="ev-desc">
+      <label for="ev-loc">Location</label>
+      <input id="ev-loc">
+      <label for="ev-budget">Budget</label>
+      <input id="ev-budget" type="number" inputmode="decimal" step="0.01">
+      <label for="ev-currency">Event currency</label>
+      <select id="ev-currency"></select>
+      <div class="two">
+        <div><label for="ev-start">Start date</label><input id="ev-start" type="date"></div>
+        <div><label for="ev-stime">Start time</label><input id="ev-stime" type="time"></div>
+      </div>
+      <div class="two">
+        <div><label for="ev-end">End date</label><input id="ev-end" type="date"></div>
+        <div><label for="ev-etime">End time</label><input id="ev-etime" type="time"></div>
+      </div>
+      <p id="ev-error" class="error" hidden></p>
+      <button id="ev-save" class="primary">Save</button>
+    </div>
+
     <div id="event-list"></div>
   </section>
 
+  <!-- ------------------------------------------------------------ event -->
   <section id="event-screen" class="screen" hidden>
     <button id="back" class="link back">‹ All trips</button>
 
-    <!-- Panels stack in the same order the desktop dashboard reads:
-         header, budget summary, activities, expenses, who owes what. -->
-
-    <div class="card panel" id="event-header">
-      <h1 id="event-name"></h1>
+    <div class="card panel">
+      <div class="panel-head">
+        <h1 id="event-name"></h1>
+        <button id="edit-event" class="ghost small">Edit</button>
+      </div>
       <p class="detail" id="event-description"></p>
       <p class="detail" id="event-location"></p>
       <p class="detail" id="event-dates"></p>
     </div>
 
+    <div class="card panel"><div class="stats" id="stats"></div></div>
+
     <div class="card panel">
-      <div class="stats" id="stats"></div>
+      <div class="panel-head">
+        <h2 class="panel-title">Attendees</h2>
+        <button id="guest-toggle" class="add" aria-label="Add attendee">+</button>
+      </div>
+      <div id="guest-form" class="addform" hidden>
+        <label for="guest-name">Username</label>
+        <input id="guest-name" autocapitalize="none" placeholder="Search by username">
+        <div id="guest-results" class="chips"></div>
+        <p id="guest-error" class="error" hidden></p>
+      </div>
+      <div id="attendee-list"></div>
     </div>
 
     <div class="card panel">
-      <h2 class="panel-title">Activities</h2>
+      <div class="panel-head">
+        <h2 class="panel-title">Activities</h2>
+        <button id="act-toggle" class="add" aria-label="Add activity">+</button>
+      </div>
+      <div id="act-form" class="addform" hidden>
+        <label for="act-name">Activity name</label>
+        <input id="act-name">
+        <div class="two">
+          <div><label for="act-date">Date</label><input id="act-date" type="date"></div>
+          <div><label for="act-time">Time</label><input id="act-time" type="time"></div>
+        </div>
+        <label for="act-loc">Location</label>
+        <input id="act-loc">
+        <p id="act-error" class="error" hidden></p>
+        <button id="act-save" class="primary">Save activity</button>
+      </div>
       <div id="activity-list"></div>
     </div>
 
@@ -109,10 +195,106 @@
       </div>
       <div id="insight"><p class="empty">Loading…</p></div>
     </div>
+
+    <button id="delete-event" class="danger wide">Delete this trip</button>
+  </section>
+
+  <!-- ---------------------------------------------------------- profile -->
+  <section id="profile-screen" class="screen" hidden>
+    <button class="link back" data-back>‹ Back</button>
+
+    <div class="card panel">
+      <div class="profile-head">
+        <div id="avatar" class="avatar"></div>
+        <div>
+          <h1 id="pf-username"></h1>
+          <p class="detail" id="pf-counts"></p>
+        </div>
+      </div>
+      <label for="pf-photo" class="filelabel">Change photo</label>
+      <input id="pf-photo" type="file" accept="image/*" hidden>
+      <label for="pf-bio">Bio</label>
+      <input id="pf-bio">
+      <button id="pf-save" class="primary">Save</button>
+    </div>
+
+    <div class="card panel">
+      <h2 class="panel-title">Find people</h2>
+      <input id="find-user" placeholder="Search by name, then pick someone to follow">
+      <div id="find-results"></div>
+    </div>
+
+    <div class="card panel">
+      <div class="panel-head">
+        <h2 class="panel-title" id="conn-title">Following</h2>
+        <div class="segmented">
+          <button id="tab-following" class="seg on">Following</button>
+          <button id="tab-followers" class="seg">Followers</button>
+        </div>
+      </div>
+      <div id="conn-list"></div>
+    </div>
+
+    <div class="card panel">
+      <h2 class="panel-title">Preferred currency</h2>
+      <select id="pref-currency"></select>
+      <p class="detail">Every amount in PlanPal is shown in this currency.</p>
+    </div>
+
+    <div class="card panel">
+      <h2 class="panel-title">Account Settings</h2>
+      <label for="ac-display">Display name</label>
+      <div class="password-row">
+        <input id="ac-display"><button id="ac-display-save" class="ghost">Save</button>
+      </div>
+      <label for="ac-username">Username</label>
+      <div class="password-row">
+        <input id="ac-username" autocapitalize="none"><button id="ac-username-save" class="ghost">Save</button>
+      </div>
+      <label for="ac-address">Home address</label>
+      <div class="password-row">
+        <input id="ac-address"><button id="ac-address-save" class="ghost">Save</button>
+      </div>
+      <label for="ac-old">Current password</label>
+      <input id="ac-old" type="password">
+      <label for="ac-new">New password</label>
+      <input id="ac-new" type="password">
+      <label for="ac-confirm">Confirm new password</label>
+      <input id="ac-confirm" type="password">
+      <button id="ac-password-save" class="primary">Change password</button>
+      <p id="ac-msg" class="error" hidden></p>
+    </div>
+  </section>
+
+  <!-- ------------------------------------------------------------- help -->
+  <section id="help-screen" class="screen" hidden>
+    <button class="link back" data-back>‹ Back</button>
+    <div class="card panel">
+      <h1>How PlanPal works</h1>
+      <h2 class="panel-title">Trips</h2>
+      <p class="detail">Create a trip with a location, dates, a currency and a budget. Everything
+        else hangs off it.</p>
+      <h2 class="panel-title">Attendees</h2>
+      <p class="detail">Add the people coming. Only attendees can be part of a shared expense.</p>
+      <h2 class="panel-title">Activities</h2>
+      <p class="detail">Give each plan a date, time and place. PlanPal checks it fits inside the
+        trip and does not clash with anything already booked, then builds an itinerary with
+        travel estimates between locations.</p>
+      <h2 class="panel-title">Expenses</h2>
+      <p class="detail">Record what was paid, by whom, and in which currency. Split it evenly or
+        pick exactly who shares it. Settle an expense once someone has paid it back.</p>
+      <h2 class="panel-title">Who owes what</h2>
+      <p class="detail">PlanPal nets every expense out and shows each person a single number in
+        your preferred display currency.</p>
+      <h2 class="panel-title">Your profile</h2>
+      <p class="detail">Change your photo, bio, display name, username, home address and password.
+        Follow other users to find them faster when adding attendees.</p>
+    </div>
   </section>
 
 </main>
 
+<div id="toast" class="toast" hidden></div>
 <script src="/app.js"></script>
 </body>
 </html>

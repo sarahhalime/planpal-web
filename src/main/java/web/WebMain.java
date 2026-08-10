@@ -6,6 +6,7 @@ import java.util.concurrent.Executors;
 
 import com.sun.net.httpserver.HttpServer;
 
+import data_access.CurrencyApiDataAccessObject;
 import data_access.FileEventDataAccessObject;
 import data_access.SqliteSocialDataAccessObject;
 import data_access.SqliteUserDataAccessObject;
@@ -51,9 +52,23 @@ public final class WebMain {
         final SqliteSocialDataAccessObject socialDataAccess =
                 new SqliteSocialDataAccessObject("users.db");
 
+        final CurrencyApiDataAccessObject currencyDataAccess = new CurrencyApiDataAccessObject();
         final ApiHandler api = new ApiHandler(userDataAccess, eventDataAccess, socialDataAccess);
+        final AccountApiHandler account =
+                new AccountApiHandler(userDataAccess, socialDataAccess, currencyDataAccess);
+        final TripApiHandler trip =
+                new TripApiHandler(eventDataAccess, userDataAccess, socialDataAccess);
         final HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
 
+        // Longest matching context wins, so the account routes take precedence over /api/.
+        server.createContext("/api/signup", account);
+        server.createContext("/api/profile", account);
+        server.createContext("/api/follows", account);
+        server.createContext("/api/follow", account);
+        server.createContext("/api/users/", account);
+        server.createContext("/api/currencies", account);
+        server.createContext("/api/account/", account);
+        server.createContext("/api/trip/", trip);
         server.createContext("/api/", api);
         server.createContext("/", new StaticHandler());
         server.setExecutor(Executors.newFixedThreadPool(THREAD_POOL_SIZE));

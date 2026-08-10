@@ -500,74 +500,7 @@ final class ApiHandler implements HttpHandler {
     }
 
     private JSONObject eventJson(Event event) {
-        final JSONObject json = new JSONObject();
-
-        json.put("eventId", event.getEventId());
-        json.put("eventName", event.getEventName());
-        json.put("description", event.getEventDescription());
-        json.put("location", event.getEventLocation());
-        json.put("currency", event.getEventCurrency());
-        json.put("budget", event.getEventBudget() == null ? 0.0 : event.getEventBudget());
-        json.put("startDate", event.getStartDate());
-        json.put("endDate", event.getEndDate());
-        json.put("attendees", new JSONArray(event.getAttendeeUsernames()));
-
-        final JSONArray activities = new JSONArray();
-        for (final Activity activity : event.getActivityList()) {
-            activities.put(new JSONObject()
-                    .put("name", activity.getActivityName())
-                    .put("date", activity.getDate())
-                    .put("time", activity.getTime())
-                    .put("location", activity.getLocation()));
-        }
-        json.put("activities", activities);
-
-        final JSONArray expenses = new JSONArray();
-        double spent = 0.0;
-        for (final Expense expense : event.getExpenseList()) {
-            spent += expense.getTotalAmount();
-            expenses.put(new JSONObject()
-                    .put("id", expense.getExpenseId())
-                    .put("name", expense.getExpenseName())
-                    .put("amount", expense.getTotalAmount())
-                    .put("originalAmount", expense.getOriginalAmount())
-                    .put("originalCurrency", expense.getOriginalCurrency())
-                    .put("payer", expense.getPayerUsername())
-                    .put("status", expense.getStatus())
-                    .put("customSplit", expense.isCustomSplit())
-                    .put("debtorCount", expense.getDebtors().size()));
-        }
-        json.put("expenses", expenses);
-        json.put("spent", spent);
-
-        json.put("balances", this.balancesJson(event.getEventId()));
-
-        return json;
-    }
-
-    /**
-     * Runs the who-owes-what interactor and returns each attendee's net balance.
-     *
-     * @param eventId the event to settle
-     * @return the balances, or an empty array when they cannot be calculated
-     */
-    private JSONArray balancesJson(int eventId) {
-        final CapturedBalances captured = new CapturedBalances();
-        final JSONArray balances = new JSONArray();
-
-        new WhoOwesWhatInteractor(
-                this.eventDataAccess, captured, this.socialDataAccess::getProfilePicture)
-                .execute(new WhoOwesWhatInputData(eventId));
-
-        if (captured.result != null) {
-            for (final AttendeeBalanceOutputData balance : captured.result.getAttendeeBalances()) {
-                balances.put(new JSONObject()
-                        .put("name", balance.getName())
-                        .put("amount", balance.getTotalAmount())
-                        .put("status", balance.getBalanceStatus()));
-            }
-        }
-        return balances;
+        return EventJson.of(event, this.eventDataAccess, this.socialDataAccess);
     }
 
     private static JSONObject loginJson(LoginOutputData data) {
