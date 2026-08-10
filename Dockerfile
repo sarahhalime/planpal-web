@@ -8,6 +8,11 @@ RUN mvn -q -B package
 
 # Run
 FROM eclipse-temurin:17-jre
+
+# Hugging Face Spaces runs the container as uid 1000, and the app writes to its data
+# folder whenever a trip changes, so that uid has to own the folder rather than root.
+# The base image may already define uid 1000, so only create it when it is missing.
+RUN id -u 1000 >/dev/null 2>&1 || useradd --create-home --uid 1000 planpal
 WORKDIR /app
 COPY --from=build /build/target/planpal-web.jar ./planpal-web.jar
 
@@ -17,6 +22,8 @@ COPY --from=build /build/target/planpal-web.jar ./planpal-web.jar
 # is lost on redeploy, which is fine for a demo but is the first thing to change if
 # this ever holds real accounts.
 COPY demo-data ./PlanPalDatabase
+RUN chown -R 1000:0 /app && chmod -R g+rwX /app
+USER 1000
 
 # The host supplies PORT; the app falls back to 8080 locally.
 ENV PORT=8080

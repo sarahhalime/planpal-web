@@ -1,3 +1,13 @@
+---
+title: PlanPal
+emoji: 🗺️
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+app_port: 8080
+pinned: false
+---
+
 # PlanPal Web
 
 A mobile web front end for [PlanPal](https://github.com/sarahhalime/CSC207-Project), the
