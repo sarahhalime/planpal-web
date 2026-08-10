@@ -16,7 +16,10 @@
   const READ_ONLY = 'This is a read-only demo. Run the app to add or change anything.';
   let snapshot = null;
 
-  const loaded = fetch('demo-snapshot.json')
+  // Pages serves the snapshot with a ten minute cache, so a browser that loaded an older
+  // copy keeps showing it after a redeploy. Revalidating means the page always reflects
+  // what was last published.
+  const loaded = fetch('demo-snapshot.json', { cache: 'no-cache' })
     .then((r) => r.json())
     .then((data) => { snapshot = data; });
 
