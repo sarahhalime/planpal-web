@@ -84,9 +84,30 @@
     </div>
 
     <div class="card panel">
+      <div class="panel-head">
+        <h2 class="panel-title">Itinerary</h2>
+        <button id="itin-load" class="ghost small">Load</button>
+      </div>
+      <div id="itinerary-list"><p class="empty">Tap Load to build the timeline.</p></div>
+    </div>
+
+    <div class="card panel">
       <h2 class="panel-title">Who Owes What</h2>
       <p class="detail">Current balances by attendee.</p>
       <div id="balance-list"></div>
+    </div>
+
+    <div class="card panel">
+      <h2 class="panel-title">Weather at Location</h2>
+      <div id="weather"><p class="empty">Loading…</p></div>
+    </div>
+
+    <div class="card panel">
+      <div class="panel-head">
+        <h2 class="panel-title">Location Insights</h2>
+        <span class="detail nowrap">AI-generated estimates</span>
+      </div>
+      <div id="insight"><p class="empty">Loading…</p></div>
     </div>
   </section>
 

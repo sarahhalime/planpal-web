@@ -178,6 +178,10 @@ function renderEvent(event) {
           </div>`;
       }).join('')
     : '<p class="empty">Everyone is settled up.</p>';
+
+  loadPanel('weather', '/api/weather', renderWeather);
+  loadPanel('insight', '/api/insight', renderInsight);
+  el('itinerary-list').innerHTML = '<p class="empty">Tap Load to build the timeline.</p>';
 }
 
 /* ------------------------------------------------------- expenses: write */
@@ -321,4 +325,74 @@ el('ex-save').addEventListener('click', async () => {
     button.disabled = false;
     button.textContent = 'Add expense';
   }
+});
+
+/* -------------------------------------- weather, insights and itinerary */
+
+/*
+ * These three call remote services, so each loads on its own after the dashboard
+ * is already on screen. A slow or failing service costs its panel only.
+ */
+
+async function loadPanel(id, path, render) {
+  const target = el(id);
+  target.innerHTML = '<p class="empty">Loading…</p>';
+  try {
+    const data = await api(`${path}?id=${encodeURIComponent(current.eventId)}`);
+    if (data.error) {
+      target.innerHTML = `<p class="empty">${escapeHtml(data.error)}</p>`;
+    } else {
+      render(target, data);
+    }
+  } catch (e) {
+    target.innerHTML = `<p class="empty">${escapeHtml(e.message)}</p>`;
+  }
+}
+
+function renderWeather(target, data) {
+  const days = data.forecast.map((day) => `
+    <div class="day">
+      <span>${escapeHtml(prettyDate(day.date).replace(/,.*$/, ''))}</span>
+      <b>${Math.round(day.temperature)} C</b>
+      <em>${escapeHtml(day.status)}</em>
+    </div>`).join('');
+
+  target.innerHTML = `
+    <div class="temp"><b>${Math.round(data.temperature)} C</b><span>${escapeHtml(data.status)}</span></div>
+    <p class="detail" style="padding-left:0">Precipitation: ${Math.round(data.precipitation)}% | Wind: ${Math.round(data.wind)} km/h</p>
+    <div class="forecast">${days}</div>`;
+}
+
+function renderInsight(target, data) {
+  const rows = [
+    ['Fun factor', data.fun], ['Safety', data.safety], ['Accessibility', data.accessibility],
+    ['Nearby amenities', data.amenities], ['Affordability', data.affordability]
+  ].map(([label, score]) =>
+    `<div class="score"><span>${label}</span><b>${score} / 5</b></div>`).join('');
+
+  const tags = data.tags.map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join('');
+  target.innerHTML = rows + (tags ? `<div class="tags">${tags}</div>` : '');
+}
+
+function renderItinerary(target, data) {
+  if (!data.items.length) {
+    target.innerHTML = '<p class="empty">Nothing scheduled yet.</p>';
+    return;
+  }
+  target.innerHTML = data.items.map((item) => {
+    const travel = item.travel
+      ? `<div class="travel${/tight|not enough/.test(item.travel) ? ' warn' : ''}">${escapeHtml(item.travel)}</div>`
+      : '';
+    return `<div class="row">
+        <div>
+          <div>${escapeHtml(item.name)}</div>
+          <div class="who">${escapeHtml(item.location || '')}</div>
+        </div>
+        <div class="amount">${escapeHtml(prettyDate(item.date))}<small>${escapeHtml(prettyTime(item.time))}</small></div>
+      </div>${travel}`;
+  }).join('');
+}
+
+el('itin-load').addEventListener('click', () => {
+  loadPanel('itinerary-list', '/api/itinerary', renderItinerary);
 });

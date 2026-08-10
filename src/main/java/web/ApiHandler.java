@@ -3,6 +3,7 @@ package web;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -14,9 +15,13 @@ import org.json.JSONObject;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
+import data_access.EnvConfig;
 import data_access.FileEventDataAccessObject;
+import data_access.LocationInsightDataAccessObject;
 import data_access.SqliteSocialDataAccessObject;
 import data_access.SqliteUserDataAccessObject;
+import data_access.ValhallaItineraryTravelGateway;
+import data_access.WeatherDao;
 import entity.Activity;
 import entity.CommonEventFactory;
 import entity.CommonExpenseFactory;
@@ -27,6 +32,17 @@ import use_case.add_expense.AddExpenseInputData;
 import use_case.add_expense.AddExpenseInteractor;
 import use_case.add_expense.AddExpenseOutputBoundary;
 import use_case.add_expense.AddExpenseOutputData;
+import use_case.itinerary.ItineraryInputData;
+import use_case.itinerary.ItineraryInteractor;
+import use_case.itinerary.ItineraryItemOutputData;
+import use_case.itinerary.ItineraryOutputBoundary;
+import use_case.itinerary.ItineraryOutputData;
+import use_case.itinerary.ItineraryTravelOutputData;
+import use_case.itinerary.ItineraryTravelStatus;
+import use_case.location_insight.LocationInsightInputData;
+import use_case.location_insight.LocationInsightInteractor;
+import use_case.location_insight.LocationInsightOutputBoundary;
+import use_case.location_insight.LocationInsightOutputData;
 import use_case.login.LoginInputData;
 import use_case.login.LoginInteractor;
 import use_case.login.LoginOutputBoundary;
@@ -35,6 +51,11 @@ import use_case.pay_expense.PayExpenseInputData;
 import use_case.pay_expense.PayExpenseInteractor;
 import use_case.pay_expense.PayExpenseOutputBoundary;
 import use_case.pay_expense.PayExpenseOutputData;
+import use_case.weather.ForecastDayOutputData;
+import use_case.weather.WeatherInputData;
+import use_case.weather.WeatherInteractor;
+import use_case.weather.WeatherOutputBoundary;
+import use_case.weather.WeatherOutputData;
 import use_case.who_owes_what.AttendeeBalanceOutputData;
 import use_case.who_owes_what.WhoOwesWhatInputData;
 import use_case.who_owes_what.WhoOwesWhatInteractor;
@@ -84,6 +105,15 @@ final class ApiHandler implements HttpHandler {
             }
             else if ("/api/expense/add".equals(path)) {
                 this.addExpense(exchange);
+            }
+            else if ("/api/weather".equals(path)) {
+                this.weather(exchange);
+            }
+            else if ("/api/insight".equals(path)) {
+                this.insight(exchange);
+            }
+            else if ("/api/itinerary".equals(path)) {
+                this.itinerary(exchange);
             }
             else {
                 respond(exchange, NOT_FOUND, new JSONObject().put("error", "Unknown endpoint"));
@@ -258,6 +288,217 @@ final class ApiHandler implements HttpHandler {
         }
     }
 
+    /**
+     * Returns the forecast for an event's location and start date.
+     *
+     * <p>These three panels are requested separately from the event itself because each one
+     * calls a remote service. Loading them alongside the dashboard would make every event
+     * wait on the slowest network call, and a service being down would take the whole page
+     * with it rather than just its own panel.</p>
+     *
+     * @param exchange the request
+     * @throws IOException when the response cannot be written
+     */
+    private void weather(HttpExchange exchange) throws IOException {
+        final Event event = this.requestedEvent(exchange);
+
+        if (event == null) {
+            return;
+        }
+
+        final Panel<WeatherOutputData> captured = new Panel<>();
+        new WeatherInteractor(new WeatherDao(), new WeatherOutputBoundary() {
+            @Override
+            public void prepareSuccessView(WeatherOutputData outputData) {
+                captured.result = outputData;
+            }
+
+            @Override
+            public void prepareFailView(String errorMessage) {
+                captured.error = errorMessage;
+            }
+        }).execute(new WeatherInputData(event.getEventLocation(), LocalDate.parse(event.getStartDate())));
+
+        if (captured.result == null) {
+            respond(exchange, OK, new JSONObject().put("error", panelError(captured.error)));
+            return;
+        }
+
+        final JSONArray forecast = new JSONArray();
+        for (final ForecastDayOutputData day : captured.result.getForecast()) {
+            forecast.put(new JSONObject()
+                    .put("date", String.valueOf(day.getDate()))
+                    .put("temperature", day.getTempAtDay())
+                    .put("status", day.getWeatherStatusAtDay()));
+        }
+
+        respond(exchange, OK, new JSONObject()
+                .put("location", captured.result.getLocation())
+                .put("temperature", captured.result.getTemperature())
+                .put("status", captured.result.getWeatherStatus())
+                .put("precipitation", captured.result.getPrecipitationProbability())
+                .put("wind", captured.result.getWindSpeed())
+                .put("forecast", forecast));
+    }
+
+    /**
+     * Returns the AI generated planning scores for an event's location.
+     *
+     * @param exchange the request
+     * @throws IOException when the response cannot be written
+     */
+    private void insight(HttpExchange exchange) throws IOException {
+        final Event event = this.requestedEvent(exchange);
+
+        if (event == null) {
+            return;
+        }
+
+        final Panel<LocationInsightOutputData> captured = new Panel<>();
+        new LocationInsightInteractor(new LocationInsightDataAccessObject(),
+                new LocationInsightOutputBoundary() {
+                    @Override
+                    public void prepareSuccessView(LocationInsightOutputData outputData) {
+                        captured.result = outputData;
+                    }
+
+                    @Override
+                    public void prepareFailView(String errorMessage) {
+                        captured.error = errorMessage;
+                    }
+                }).execute(new LocationInsightInputData(event.getEventLocation()));
+
+        if (captured.result == null) {
+            respond(exchange, OK, new JSONObject().put("error", panelError(captured.error)));
+        }
+        else {
+            respond(exchange, OK, new JSONObject()
+                    .put("fun", captured.result.getFunScore())
+                    .put("safety", captured.result.getSafetyScore())
+                    .put("accessibility", captured.result.getAccessibilityScore())
+                    .put("amenities", captured.result.getAmenitiesScore())
+                    .put("affordability", captured.result.getAffordabilityScore())
+                    .put("tags", new JSONArray(captured.result.getTagsList())));
+        }
+    }
+
+    /**
+     * Returns the event's activities as a timeline, with travel estimates between them.
+     *
+     * @param exchange the request
+     * @throws IOException when the response cannot be written
+     */
+    private void itinerary(HttpExchange exchange) throws IOException {
+        final Event event = this.requestedEvent(exchange);
+
+        if (event == null) {
+            return;
+        }
+
+        final Panel<ItineraryOutputData> captured = new Panel<>();
+        new ItineraryInteractor(this.eventDataAccess::getEvent, new ItineraryOutputBoundary() {
+            @Override
+            public void prepareSuccessView(ItineraryOutputData outputData) {
+                captured.result = outputData;
+            }
+
+            @Override
+            public void prepareFailView(String errorMessage) {
+                captured.error = errorMessage;
+            }
+        }, new ValhallaItineraryTravelGateway(
+                EnvConfig.get("GOOGLE_MAPS_API_KEY", "google.maps.api.key")))
+                .execute(new ItineraryInputData(event.getEventId()));
+
+        if (captured.result == null) {
+            respond(exchange, OK, new JSONObject().put("error", panelError(captured.error)));
+            return;
+        }
+
+        final JSONArray items = new JSONArray();
+        for (final ItineraryItemOutputData item : captured.result.getItems()) {
+            final JSONObject json = new JSONObject()
+                    .put("name", item.getActivityName())
+                    .put("date", item.getDate())
+                    .put("time", item.getTime())
+                    .put("location", item.getLocation());
+
+            if (item.getTravelToNext() != null) {
+                json.put("travel", travelSummary(item.getTravelToNext()));
+            }
+            items.put(json);
+        }
+
+        respond(exchange, OK, new JSONObject().put("items", items));
+    }
+
+    /**
+     * Reads the event named by the {@code id} query parameter, answering the request itself
+     * when the id is missing or unknown.
+     *
+     * @param exchange the request
+     * @return the event, or null when a response has already been sent
+     * @throws IOException when the response cannot be written
+     */
+    private Event requestedEvent(HttpExchange exchange) throws IOException {
+        final Map<String, String> query = parseQuery(exchange.getRequestURI().getRawQuery());
+        Event event = null;
+
+        try {
+            event = this.eventDataAccess.getEvent(Integer.parseInt(query.getOrDefault("id", "")));
+        }
+        catch (final NumberFormatException exception) {
+            respond(exchange, BAD_REQUEST, new JSONObject().put("error", "A numeric id is required."));
+        }
+        catch (final Exception exception) {
+            respond(exchange, NOT_FOUND, new JSONObject().put("error", "That event was not found."));
+        }
+        return event;
+    }
+
+    /**
+     * Describes the journey to the next activity the way the desktop itinerary does:
+     * how long it takes, and whether the gap in the schedule is enough for it.
+     *
+     * @param travel the estimate between two activities
+     * @return a short human readable summary, or an empty string when there is nothing useful
+     */
+    private static String travelSummary(ItineraryTravelOutputData travel) {
+        final StringBuilder summary = new StringBuilder();
+
+        if (travel.getStatus() == ItineraryTravelStatus.UNAVAILABLE
+                || travel.getStatus() == ItineraryTravelStatus.NO_SCHEDULE) {
+            return "";
+        }
+
+        if (travel.getDrivingMinutes() > 0) {
+            summary.append(travel.getDrivingMinutes()).append(" min drive");
+        }
+        else if (travel.getWalkingMinutes() > 0) {
+            summary.append(travel.getWalkingMinutes()).append(" min walk");
+        }
+
+        if (travel.getStatus() == ItineraryTravelStatus.TIGHT) {
+            summary.append(" · tight");
+        }
+        else if (travel.getStatus() == ItineraryTravelStatus.INSUFFICIENT) {
+            summary.append(" · not enough time");
+        }
+        return summary.toString();
+    }
+
+    private static String panelError(String message) {
+        final String text;
+
+        if (message == null || message.isBlank()) {
+            text = "Unavailable right now.";
+        }
+        else {
+            text = message;
+        }
+        return text;
+    }
+
     private JSONObject eventJson(Event event) {
         final JSONObject json = new JSONObject();
 
@@ -386,6 +627,12 @@ final class ApiHandler implements HttpHandler {
         try (OutputStream out = exchange.getResponseBody()) {
             out.write(bytes);
         }
+    }
+
+    /** Captures whatever a panel's interactor reports. */
+    private static final class Panel<T> {
+        private T result;
+        private String error;
     }
 
     /** Captures whether a writing interactor succeeded, and why it did not. */

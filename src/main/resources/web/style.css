@@ -210,3 +210,27 @@ select {
   font-weight: 700;
 }
 .pay[disabled] { opacity: .5; }
+
+/* Weather, insights and itinerary panels */
+.small { padding: 6px 12px; font-size: 13px; }
+.nowrap { white-space: nowrap; padding-left: 0; }
+
+.temp { display: flex; align-items: baseline; gap: 12px; margin-bottom: 4px; }
+.temp b { font-size: 30px; font-weight: 700; }
+.temp span { font-weight: 600; }
+.forecast { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 14px; }
+.day { text-align: center; padding: 10px 4px; border: 1px solid var(--border); border-radius: 10px; }
+.day span { display: block; color: var(--secondary); font-size: 11px; text-transform: uppercase; }
+.day b { display: block; font-size: 16px; margin: 3px 0 1px; }
+.day em { font-style: normal; color: var(--muted); font-size: 11px; }
+
+.score { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 9px 2px; border-bottom: 1px solid var(--border); }
+.score:last-of-type { border-bottom: none; }
+.score span { color: var(--secondary); font-size: 12px; text-transform: uppercase; letter-spacing: .03em; }
+.score b { font-size: 14px; white-space: nowrap; }
+
+.tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
+.tag { background: var(--primary-light); color: var(--primary); font-size: 12px; font-weight: 600; padding: 5px 11px; border-radius: 999px; }
+
+.travel { color: var(--secondary); font-size: 12px; padding: 6px 2px 6px 14px; border-left: 2px solid var(--border); margin-left: 4px; }
+.travel.warn { color: var(--owe); }

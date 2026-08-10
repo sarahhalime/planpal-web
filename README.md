@@ -52,6 +52,14 @@ Keys may also be placed in a `.env` file beside the jar. **Never commit that fil
 |---|---|---|
 | `POST` | `/api/login` | The user, their preferred currency, and their events |
 | `GET` | `/api/event?id={id}` | One event with its expenses, activities, budget and balances |
+| `POST` | `/api/expense/add` | Adds an expense, then returns the reloaded event |
+| `POST` | `/api/expense/pay` | Settles an expense, then returns the reloaded event |
+| `GET` | `/api/weather?id={id}` | Forecast for the event's location and dates |
+| `GET` | `/api/insight?id={id}` | Gemini planning scores and tags for the location |
+| `GET` | `/api/itinerary?id={id}` | The activity timeline with travel estimates |
+
+The last three each call a remote service, so the client requests them separately once the
+dashboard is already on screen. A slow or unavailable service costs its own panel only.
 
 ## Deploying
 
@@ -65,7 +73,10 @@ something to show immediately.
 
 ## Status
 
-This is a demo front end. It covers signing in, browsing trips, and viewing expenses, the
-schedule and balances. Creating and editing records is still desktop-only, and there is no
-session token: the browser holds the signed-in user in memory for the page's lifetime.
-Anything written by the container is lost on redeploy.
+The dashboard mirrors the desktop layout: header, budget summary, activities, expenses,
+itinerary, who owes what, weather and location insights, stacked into one column.
+
+Expenses can be added and settled from the phone. Editing everything else, custom splits,
+and the event map remain desktop-only. There is no session token: the browser holds the
+signed-in user in memory for the page's lifetime. Anything the container writes is lost on
+redeploy.
