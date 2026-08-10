@@ -5,7 +5,9 @@
       2,
       4
     ],
-    "hi": [6],
+    "hi": [
+      6
+    ],
     "ethan": [
       1,
       3,
@@ -62,55 +64,19 @@
           "activityTime": "15:00"
         },
         {
-          "activityLocation": "Saint-Laurent",
-          "activityDate": "2026-07-03",
-          "activityName": "Schwartz's",
-          "activityTime": "19:00"
-        },
-        {
-          "activityLocation": "Sherbrooke",
-          "activityDate": "2026-07-04",
-          "activityName": "Art museum",
-          "activityTime": "10:30"
-        },
-        {
           "activityLocation": "Quartier",
           "activityDate": "2026-07-04",
           "activityName": "Jazz festival",
           "activityTime": "19:30"
         },
         {
-          "activityLocation": "Mont Royal",
-          "activityDate": "2026-07-05",
-          "activityName": "Mont Royal hike",
-          "activityTime": "09:00"
-        },
-        {
-          "activityLocation": "Lachine Canal",
-          "activityDate": "2026-07-05",
-          "activityName": "Canal bike ride",
-          "activityTime": "14:00"
-        },
-        {
           "activityLocation": "Bell Centre",
           "activityDate": "2026-07-05",
           "activityName": "Hockey game",
           "activityTime": "19:00"
-        },
-        {
-          "activityLocation": "Cafe Olive",
-          "activityDate": "2026-07-06",
-          "activityName": "Brunch",
-          "activityTime": "10:00"
-        },
-        {
-          "activityLocation": "Autoroute 20",
-          "activityDate": "2026-07-06",
-          "activityName": "Drive home",
-          "activityTime": "13:00"
         }
       ],
-      "eventBudget": 3800,
+      "eventBudget": 1590.0,
       "eventDescription": "Five of us, three nights, and a shared tab that got out of hand.",
       "eventName": "Summer Trip to Montreal",
       "startTime": "08:30",
@@ -143,100 +109,7 @@
           ],
           "expensePayerUsername": "sarah",
           "expenseName": "Hotel",
-          "expenseStatus": "PAID"
-        },
-        {
-          "expenseOriginalCurrency": "CAD",
-          "expenseAmount": 240,
-          "expenseOriginalSplits": {
-            "laura": 48,
-            "sarah": 48,
-            "avina": 48,
-            "jeff": 48,
-            "ethan": 48
-          },
-          "expenseOriginalAmount": 240,
-          "expenseExpenseSplits": {
-            "laura": 48,
-            "sarah": 48,
-            "avina": 48,
-            "jeff": 48,
-            "ethan": 48
-          },
-          "expenseId": 3,
-          "expenseCustomSplit": false,
-          "expenseDebtors": [
-            "sarah",
-            "jeff",
-            "avina",
-            "ethan",
-            "laura"
-          ],
-          "expensePayerUsername": "ethan",
-          "expenseName": "Car rental",
-          "expenseStatus": "PAID"
-        },
-        {
-          "expenseOriginalCurrency": "CAD",
-          "expenseAmount": 92.5,
-          "expenseOriginalSplits": {
-            "laura": 18.5,
-            "sarah": 18.5,
-            "avina": 18.5,
-            "jeff": 18.5,
-            "ethan": 18.5
-          },
-          "expenseOriginalAmount": 92.5,
-          "expenseExpenseSplits": {
-            "laura": 18.5,
-            "sarah": 18.5,
-            "avina": 18.5,
-            "jeff": 18.5,
-            "ethan": 18.5
-          },
-          "expenseId": 5,
-          "expenseCustomSplit": false,
-          "expenseDebtors": [
-            "sarah",
-            "jeff",
-            "avina",
-            "ethan",
-            "laura"
-          ],
-          "expensePayerUsername": "jeff",
-          "expenseName": "Gas back",
-          "expenseStatus": "PAID"
-        },
-        {
-          "expenseOriginalCurrency": "CAD",
-          "expenseAmount": 60,
-          "expenseOriginalSplits": {
-            "laura": 12,
-            "sarah": 12,
-            "avina": 12,
-            "jeff": 12,
-            "ethan": 12
-          },
-          "expenseOriginalAmount": 60,
-          "expenseExpenseSplits": {
-            "laura": 12,
-            "sarah": 12,
-            "avina": 12,
-            "jeff": 12,
-            "ethan": 12
-          },
-          "expenseId": 6,
-          "expenseCustomSplit": false,
-          "expenseDebtors": [
-            "sarah",
-            "jeff",
-            "avina",
-            "ethan",
-            "laura"
-          ],
-          "expensePayerUsername": "sarah",
-          "expenseName": "Parking",
-          "expenseStatus": "PAID"
+          "expenseStatus": "UNPAID"
         },
         {
           "expenseOriginalCurrency": "CAD",
@@ -264,159 +137,7 @@
           ],
           "expensePayerUsername": "avina",
           "expenseName": "Dinner",
-          "expenseStatus": "PAID"
-        },
-        {
-          "expenseOriginalCurrency": "CAD",
-          "expenseAmount": 96,
-          "expenseOriginalSplits": {
-            "laura": 24,
-            "sarah": 24,
-            "avina": 24,
-            "jeff": 24
-          },
-          "expenseOriginalAmount": 96,
-          "expenseExpenseSplits": {
-            "laura": 24,
-            "sarah": 24,
-            "avina": 24,
-            "jeff": 24
-          },
-          "expenseId": 8,
-          "expenseCustomSplit": false,
-          "expenseDebtors": [
-            "sarah",
-            "jeff",
-            "laura",
-            "avina"
-          ],
-          "expensePayerUsername": "laura",
-          "expenseName": "Brunch",
-          "expenseStatus": "PAID"
-        },
-        {
-          "expenseOriginalCurrency": "CAD",
-          "expenseAmount": 42.5,
-          "expenseOriginalSplits": {
-            "laura": 8.5,
-            "sarah": 8.5,
-            "avina": 8.5,
-            "jeff": 8.5,
-            "ethan": 8.5
-          },
-          "expenseOriginalAmount": 42.5,
-          "expenseExpenseSplits": {
-            "laura": 8.5,
-            "sarah": 8.5,
-            "avina": 8.5,
-            "jeff": 8.5,
-            "ethan": 8.5
-          },
-          "expenseId": 9,
-          "expenseCustomSplit": false,
-          "expenseDebtors": [
-            "sarah",
-            "jeff",
-            "avina",
-            "ethan",
-            "laura"
-          ],
-          "expensePayerUsername": "ethan",
-          "expenseName": "Poutine",
-          "expenseStatus": "PAID"
-        },
-        {
-          "expenseOriginalCurrency": "CAD",
-          "expenseAmount": 130,
-          "expenseOriginalSplits": {
-            "laura": 26,
-            "sarah": 26,
-            "avina": 26,
-            "jeff": 26,
-            "ethan": 26
-          },
-          "expenseOriginalAmount": 130,
-          "expenseExpenseSplits": {
-            "laura": 26,
-            "sarah": 26,
-            "avina": 26,
-            "jeff": 26,
-            "ethan": 26
-          },
-          "expenseId": 10,
-          "expenseCustomSplit": false,
-          "expenseDebtors": [
-            "sarah",
-            "jeff",
-            "avina",
-            "ethan",
-            "laura"
-          ],
-          "expensePayerUsername": "sarah",
-          "expenseName": "Groceries",
-          "expenseStatus": "PAID"
-        },
-        {
-          "expenseOriginalCurrency": "CAD",
-          "expenseAmount": 27.5,
-          "expenseOriginalSplits": {
-            "laura": 5.5,
-            "sarah": 5.5,
-            "avina": 5.5,
-            "jeff": 5.5,
-            "ethan": 5.5
-          },
-          "expenseOriginalAmount": 27.5,
-          "expenseExpenseSplits": {
-            "laura": 5.5,
-            "sarah": 5.5,
-            "avina": 5.5,
-            "jeff": 5.5,
-            "ethan": 5.5
-          },
-          "expenseId": 11,
-          "expenseCustomSplit": false,
-          "expenseDebtors": [
-            "sarah",
-            "jeff",
-            "avina",
-            "ethan",
-            "laura"
-          ],
-          "expensePayerUsername": "laura",
-          "expenseName": "Coffee 1",
-          "expenseStatus": "PAID"
-        },
-        {
-          "expenseOriginalCurrency": "CAD",
-          "expenseAmount": 31,
-          "expenseOriginalSplits": {
-            "laura": 6.2,
-            "sarah": 6.2,
-            "avina": 6.2,
-            "jeff": 6.2,
-            "ethan": 6.2
-          },
-          "expenseOriginalAmount": 31,
-          "expenseExpenseSplits": {
-            "laura": 6.2,
-            "sarah": 6.2,
-            "avina": 6.2,
-            "jeff": 6.2,
-            "ethan": 6.2
-          },
-          "expenseId": 12,
-          "expenseCustomSplit": false,
-          "expenseDebtors": [
-            "sarah",
-            "jeff",
-            "avina",
-            "ethan",
-            "laura"
-          ],
-          "expensePayerUsername": "avina",
-          "expenseName": "Coffee 2",
-          "expenseStatus": "PAID"
+          "expenseStatus": "UNPAID"
         },
         {
           "expenseOriginalCurrency": "CAD",
@@ -451,183 +172,6 @@
         },
         {
           "expenseOriginalCurrency": "CAD",
-          "expenseAmount": 96,
-          "expenseOriginalSplits": {
-            "laura": 24,
-            "sarah": 24,
-            "jeff": 24,
-            "ethan": 24
-          },
-          "expenseOriginalAmount": 96,
-          "expenseExpenseSplits": {
-            "laura": 24,
-            "sarah": 24,
-            "jeff": 24,
-            "ethan": 24
-          },
-          "expenseId": 14,
-          "expenseCustomSplit": false,
-          "expenseDebtors": [
-            "sarah",
-            "jeff",
-            "laura",
-            "ethan"
-          ],
-          "expensePayerUsername": "sarah",
-          "expenseName": "Museum",
-          "expenseStatus": "PAID"
-        },
-        {
-          "expenseOriginalCurrency": "CAD",
-          "expenseAmount": 110,
-          "expenseOriginalSplits": {
-            "laura": 22,
-            "sarah": 22,
-            "avina": 22,
-            "jeff": 22,
-            "ethan": 22
-          },
-          "expenseOriginalAmount": 110,
-          "expenseExpenseSplits": {
-            "laura": 22,
-            "sarah": 22,
-            "avina": 22,
-            "jeff": 22,
-            "ethan": 22
-          },
-          "expenseId": 15,
-          "expenseCustomSplit": false,
-          "expenseDebtors": [
-            "sarah",
-            "jeff",
-            "avina",
-            "ethan",
-            "laura"
-          ],
-          "expensePayerUsername": "laura",
-          "expenseName": "Bikes",
-          "expenseStatus": "PAID"
-        },
-        {
-          "expenseOriginalCurrency": "CAD",
-          "expenseAmount": 68,
-          "expenseOriginalSplits": {
-            "laura": 13.6,
-            "sarah": 13.6,
-            "avina": 13.6,
-            "jeff": 13.6,
-            "ethan": 13.6
-          },
-          "expenseOriginalAmount": 68,
-          "expenseExpenseSplits": {
-            "laura": 13.6,
-            "sarah": 13.6,
-            "avina": 13.6,
-            "jeff": 13.6,
-            "ethan": 13.6
-          },
-          "expenseId": 16,
-          "expenseCustomSplit": false,
-          "expenseDebtors": [
-            "sarah",
-            "jeff",
-            "avina",
-            "ethan",
-            "laura"
-          ],
-          "expensePayerUsername": "avina",
-          "expenseName": "Picnic",
-          "expenseStatus": "PAID"
-        },
-        {
-          "expenseOriginalCurrency": "CAD",
-          "expenseAmount": 140,
-          "expenseOriginalSplits": {
-            "laura": 28,
-            "sarah": 28,
-            "avina": 28,
-            "jeff": 28,
-            "ethan": 28
-          },
-          "expenseOriginalAmount": 140,
-          "expenseExpenseSplits": {
-            "laura": 28,
-            "sarah": 28,
-            "avina": 28,
-            "jeff": 28,
-            "ethan": 28
-          },
-          "expenseId": 17,
-          "expenseCustomSplit": false,
-          "expenseDebtors": [
-            "sarah",
-            "jeff",
-            "avina",
-            "ethan",
-            "laura"
-          ],
-          "expensePayerUsername": "ethan",
-          "expenseName": "Metro",
-          "expenseStatus": "PAID"
-        },
-        {
-          "expenseOriginalCurrency": "CAD",
-          "expenseAmount": 23.75,
-          "expenseOriginalSplits": {
-            "laura": 4.75,
-            "sarah": 4.75,
-            "avina": 4.75,
-            "jeff": 4.75,
-            "ethan": 4.75
-          },
-          "expenseOriginalAmount": 23.75,
-          "expenseExpenseSplits": {
-            "laura": 4.75,
-            "sarah": 4.75,
-            "avina": 4.75,
-            "jeff": 4.75,
-            "ethan": 4.75
-          },
-          "expenseId": 18,
-          "expenseCustomSplit": false,
-          "expenseDebtors": [
-            "sarah",
-            "jeff",
-            "avina",
-            "ethan",
-            "laura"
-          ],
-          "expensePayerUsername": "jeff",
-          "expenseName": "Bagels",
-          "expenseStatus": "PAID"
-        },
-        {
-          "expenseOriginalCurrency": "CAD",
-          "expenseAmount": 87,
-          "expenseOriginalSplits": {
-            "laura": 29,
-            "sarah": 29,
-            "avina": 29
-          },
-          "expenseOriginalAmount": 87,
-          "expenseExpenseSplits": {
-            "laura": 29,
-            "sarah": 29,
-            "avina": 29
-          },
-          "expenseId": 19,
-          "expenseCustomSplit": false,
-          "expenseDebtors": [
-            "sarah",
-            "avina",
-            "laura"
-          ],
-          "expensePayerUsername": "sarah",
-          "expenseName": "Souvenirs",
-          "expenseStatus": "PAID"
-        },
-        {
-          "expenseOriginalCurrency": "CAD",
           "expenseAmount": 186,
           "expenseOriginalSplits": {
             "laura": 22,
@@ -655,53 +199,6 @@
           ],
           "expensePayerUsername": "jeff",
           "expenseName": "Bar tab",
-          "expenseStatus": "PAID"
-        },
-        {
-          "expenseOriginalCurrency": "CAD",
-          "expenseAmount": 240,
-          "expenseOriginalSplits": {
-            "laura": 120,
-            "avina": 120
-          },
-          "expenseOriginalAmount": 240,
-          "expenseExpenseSplits": {
-            "laura": 120,
-            "avina": 120
-          },
-          "expenseId": 21,
-          "expenseCustomSplit": true,
-          "expenseDebtors": [
-            "avina",
-            "laura"
-          ],
-          "expensePayerUsername": "avina",
-          "expenseName": "Spa day",
-          "expenseStatus": "PAID"
-        },
-        {
-          "expenseOriginalCurrency": "CAD",
-          "expenseAmount": 310,
-          "expenseOriginalSplits": {
-            "sarah": 90,
-            "jeff": 110,
-            "ethan": 110
-          },
-          "expenseOriginalAmount": 310,
-          "expenseExpenseSplits": {
-            "sarah": 90,
-            "jeff": 110,
-            "ethan": 110
-          },
-          "expenseId": 22,
-          "expenseCustomSplit": true,
-          "expenseDebtors": [
-            "ethan",
-            "jeff",
-            "sarah"
-          ],
-          "expensePayerUsername": "ethan",
-          "expenseName": "Hockey",
           "expenseStatus": "UNPAID"
         },
         {
@@ -733,87 +230,6 @@
           ],
           "expensePayerUsername": "sarah",
           "expenseName": "Duty-free",
-          "expenseStatus": "PAID"
-        },
-        {
-          "expenseOriginalCurrency": "USD",
-          "expenseAmount": 71.93,
-          "expenseOriginalSplits": {
-            "sarah": 17.5,
-            "jeff": 17.5,
-            "ethan": 17.5
-          },
-          "expenseOriginalAmount": 52.5,
-          "expenseExpenseSplits": {
-            "sarah": 23.98,
-            "jeff": 23.98,
-            "ethan": 23.97
-          },
-          "expenseId": 24,
-          "expenseCustomSplit": false,
-          "expenseDebtors": [
-            "sarah",
-            "jeff",
-            "ethan"
-          ],
-          "expensePayerUsername": "jeff",
-          "expenseName": "Diner",
-          "expenseStatus": "PAID"
-        },
-        {
-          "expenseOriginalCurrency": "EUR",
-          "expenseAmount": 26.64,
-          "expenseOriginalSplits": {
-            "laura": 3.6,
-            "sarah": 3.6,
-            "avina": 3.6,
-            "jeff": 3.6,
-            "ethan": 3.6
-          },
-          "expenseOriginalAmount": 18,
-          "expenseExpenseSplits": {
-            "laura": 5.32,
-            "sarah": 5.33,
-            "avina": 5.33,
-            "jeff": 5.33,
-            "ethan": 5.33
-          },
-          "expenseId": 25,
-          "expenseCustomSplit": false,
-          "expenseDebtors": [
-            "sarah",
-            "jeff",
-            "avina",
-            "ethan",
-            "laura"
-          ],
-          "expensePayerUsername": "avina",
-          "expenseName": "Booking",
-          "expenseStatus": "PAID"
-        },
-        {
-          "expenseOriginalCurrency": "JPY",
-          "expenseAmount": 0.885,
-          "expenseOriginalSplits": {
-            "sarah": 33.333333333333336,
-            "jeff": 33.333333333333336,
-            "ethan": 33.333333333333336
-          },
-          "expenseOriginalAmount": 100,
-          "expenseExpenseSplits": {
-            "sarah": 0.295,
-            "jeff": 0.295,
-            "ethan": 0.295
-          },
-          "expenseId": 26,
-          "expenseCustomSplit": false,
-          "expenseDebtors": [
-            "sarah",
-            "jeff",
-            "ethan"
-          ],
-          "expensePayerUsername": "avina",
-          "expenseName": "Lunch",
           "expenseStatus": "PAID"
         }
       ]
@@ -1197,46 +613,50 @@
         "laura"
       ],
       "eventCurrency": "CAD",
-      "activities": [{
-        "activityLocation": "Pearson",
-        "activityDate": "2026-12-18",
-        "activityName": "Flight out",
-        "activityTime": "06:00"
-      }],
+      "activities": [
+        {
+          "activityLocation": "Pearson",
+          "activityDate": "2026-12-18",
+          "activityName": "Flight out",
+          "activityTime": "06:00"
+        }
+      ],
       "eventBudget": 2400,
       "eventDescription": "Booked the flights, nothing else planned yet.",
       "eventName": "Ski Trip to Whistler",
       "startTime": "06:00",
       "endTime": "22:00",
       "startDate": "2026-12-18",
-      "expenses": [{
-        "expenseOriginalCurrency": "CAD",
-        "expenseAmount": 960,
-        "expenseOriginalSplits": {
-          "laura": 240,
-          "sarah": 240,
-          "jeff": 240,
-          "ethan": 240
-        },
-        "expenseOriginalAmount": 960,
-        "expenseExpenseSplits": {
-          "laura": 240,
-          "sarah": 240,
-          "jeff": 240,
-          "ethan": 240
-        },
-        "expenseId": 38,
-        "expenseCustomSplit": false,
-        "expenseDebtors": [
-          "sarah",
-          "jeff",
-          "ethan",
-          "laura"
-        ],
-        "expensePayerUsername": "sarah",
-        "expenseName": "Flights",
-        "expenseStatus": "UNPAID"
-      }]
+      "expenses": [
+        {
+          "expenseOriginalCurrency": "CAD",
+          "expenseAmount": 960,
+          "expenseOriginalSplits": {
+            "laura": 240,
+            "sarah": 240,
+            "jeff": 240,
+            "ethan": 240
+          },
+          "expenseOriginalAmount": 960,
+          "expenseExpenseSplits": {
+            "laura": 240,
+            "sarah": 240,
+            "jeff": 240,
+            "ethan": 240
+          },
+          "expenseId": 38,
+          "expenseCustomSplit": false,
+          "expenseDebtors": [
+            "sarah",
+            "jeff",
+            "ethan",
+            "laura"
+          ],
+          "expensePayerUsername": "sarah",
+          "expenseName": "Flights",
+          "expenseStatus": "UNPAID"
+        }
+      ]
     },
     "5": {
       "eventId": 5,
@@ -1437,7 +857,9 @@
       "eventId": 6,
       "endDate": "2026-08-10",
       "eventLocation": "",
-      "attendees": ["hi"],
+      "attendees": [
+        "hi"
+      ],
       "eventCurrency": "CAD",
       "activities": [],
       "eventBudget": 0,
