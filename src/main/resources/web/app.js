@@ -8,6 +8,7 @@ let session = null;   // the signed-in user and their trips
 let current = null;   // the trip being viewed
 let editingEventId = null;
 let editingActivity = null;
+let editingExpense = null;
 let previousScreen = 'events-screen';
 
 /* ------------------------------------------------------------- plumbing */
@@ -518,6 +519,22 @@ function renderExpenses(event) {
       buttons.appendChild(settle);
     }
 
+    const edit = document.createElement('button');
+    edit.className = 'pay';
+    edit.textContent = 'Edit';
+    edit.addEventListener('click', () => {
+      editingExpense = expense;
+      el('ex-form-title').textContent = 'Edit expense';
+      el('ex-save').textContent = 'Save changes';
+      el('ex-name').value = expense.name;
+      el('ex-amount').value = expense.amount;
+      el('ex-payer').value = expense.payer;
+      el('add-form').hidden = false;
+      el('add-toggle').textContent = '×';
+      el('add-form').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+    buttons.appendChild(edit);
+
     const remove = document.createElement('button');
     remove.className = 'pay danger-text';
     remove.textContent = 'Remove';
@@ -553,6 +570,11 @@ function renderAddForm(event) {
 el('add-toggle').addEventListener('click', () => {
   const form = el('add-form');
   form.hidden = !form.hidden;
+  editingExpense = null;
+  el('ex-form-title').textContent = 'Add expense';
+  el('ex-save').textContent = 'Add expense';
+  el('ex-name').value = '';
+  el('ex-amount').value = '';
   el('add-toggle').textContent = form.hidden ? '+' : '×';
 });
 
@@ -560,17 +582,24 @@ el('ex-save').addEventListener('click', () => {
   el('ex-error').hidden = true;
   run(el('ex-save'), 'Adding…', async () => {
     try {
-      const updated = await post('/api/expense/add', {
+      const body = {
         eventId: current.eventId, name: el('ex-name').value,
         amount: parseFloat(el('ex-amount').value), payer: el('ex-payer').value,
         debtors: [...document.querySelectorAll('#ex-debtors .chip.on')].map((c) => c.dataset.name)
-      });
+      };
+      if (editingExpense) {
+        body.expenseId = editingExpense.id;
+        body.status = editingExpense.status;
+      }
+      const updated = await post(
+        editingExpense ? '/api/trip/expense/edit' : '/api/expense/add', body);
       el('ex-name').value = '';
       el('ex-amount').value = '';
       el('add-form').hidden = true;
       el('add-toggle').textContent = '+';
       renderEvent(updated);
-      toast('Expense added.');
+      toast(editingExpense ? 'Expense updated.' : 'Expense added.');
+      editingExpense = null;
     } catch (e) {
       showError('ex-error', e.message);
     }
@@ -802,3 +831,52 @@ accountAction('ac-password-save', '/api/account/password',
     lastPassword = el('ac-new').value;
     ['ac-old', 'ac-new', 'ac-confirm'].forEach((id) => { el(id).value = ''; });
   });
+
+/* ------------------------------------------ map, photo and the report */
+
+el('map-load').addEventListener('click', () => loadPanel('map-box', '/api/trip/map', renderMap));
+
+function renderMap(target, data) {
+  if (!data.points.length) {
+    target.innerHTML = '<p class="empty">No locations to plot yet.</p>';
+    return;
+  }
+
+  // OpenStreetMap's embed takes a bounding box, so fit one around every point.
+  const lats = data.points.map((p) => p.latitude);
+  const lons = data.points.map((p) => p.longitude);
+  const pad = 0.02;
+  const box = [Math.min(...lons) - pad, Math.min(...lats) - pad,
+    Math.max(...lons) + pad, Math.max(...lats) + pad].join(',');
+  const marker = `${data.points[0].latitude},${data.points[0].longitude}`;
+
+  target.innerHTML = `
+    <iframe title="Event map" loading="lazy"
+      src="https://www.openstreetmap.org/export/embed.html?bbox=${box}&layer=mapnik&marker=${marker}"></iframe>
+    <div class="maplist">${data.points.map((point) => `
+      <div class="row"><div><div>${escapeHtml(point.title)}</div>
+        <div class="who">${escapeHtml(point.address || '')}</div></div>
+        <div class="amount"><small>${point.isEvent ? 'Event' : 'Activity'}</small></div></div>`).join('')}
+    </div>`;
+}
+
+el('ev-photo').addEventListener('change', async () => {
+  const file = el('ev-photo').files[0];
+  if (!file) { return; }
+  try {
+    const buffer = await file.arrayBuffer();
+    let binary = '';
+    new Uint8Array(buffer).forEach((byte) => { binary += String.fromCharCode(byte); });
+    renderEvent(await post('/api/trip/photo',
+      { eventId: current.eventId, photo: btoa(binary) }));
+    toast('Event photo saved.');
+  } catch (e) {
+    toast(e.message);
+  }
+});
+
+el('ev-report').addEventListener('click', () => {
+  // Let the browser download it rather than writing to a path on the server.
+  window.location.href = `/api/trip/report?id=${current.eventId}` +
+    `&username=${encodeURIComponent(session.username)}`;
+});

@@ -73,10 +73,15 @@ something to show immediately.
 
 ## Status
 
-The dashboard mirrors the desktop layout: header, budget summary, activities, expenses,
-itinerary, who owes what, weather and location insights, stacked into one column.
+Every use case in the desktop app is reachable from the phone except Google sign-in, which
+needs a redirect URI registered against the deployed domain rather than the desktop's
+localhost callback.
 
-Expenses can be added and settled from the phone. Editing everything else, custom splits,
-and the event map remain desktop-only. There is no session token: the browser holds the
-signed-in user in memory for the page's lifetime. Anything the container writes is lost on
-redeploy.
+Two things still differ from the desktop. Custom splits are entered as an even split
+between whoever you pick, rather than per-person amounts. And there is no session token:
+the browser holds the signed-in user in memory for the page's lifetime, so this is a demo
+front end, not something to point at real accounts. Anything the container writes is lost
+on redeploy.
+
+The event map depends on the Google Places quota; when it is exhausted the panel says so
+and the rest of the dashboard is unaffected.

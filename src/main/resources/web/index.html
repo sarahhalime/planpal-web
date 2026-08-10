@@ -106,7 +106,12 @@
     <div class="card panel">
       <div class="panel-head">
         <h1 id="event-name"></h1>
-        <button id="edit-event" class="ghost small">Edit</button>
+        <div class="rowbtns">
+          <label for="ev-photo" class="ghost small filelabel">Photo</label>
+          <input id="ev-photo" type="file" accept="image/*" hidden>
+          <button id="ev-report" class="ghost small">Export</button>
+          <button id="edit-event" class="ghost small">Edit</button>
+        </div>
       </div>
       <p class="detail" id="event-description"></p>
       <p class="detail" id="event-location"></p>
@@ -155,6 +160,7 @@
         <button id="add-toggle" class="add" aria-label="Add expense">+</button>
       </div>
       <div id="add-form" class="addform" hidden>
+        <h3 id="ex-form-title" class="formtitle">Add expense</h3>
         <label for="ex-name">What was it for?</label>
         <input id="ex-name" placeholder="Dinner">
         <label for="ex-amount">Amount</label>
@@ -181,6 +187,14 @@
       <h2 class="panel-title">Who Owes What</h2>
       <p class="detail">Current balances by attendee.</p>
       <div id="balance-list"></div>
+    </div>
+
+    <div class="card panel">
+      <div class="panel-head">
+        <h2 class="panel-title">Event Map</h2>
+        <button id="map-load" class="ghost small">Load</button>
+      </div>
+      <div id="map-box"><p class="empty">Tap Load to plot the trip.</p></div>
     </div>
 
     <div class="card panel">
