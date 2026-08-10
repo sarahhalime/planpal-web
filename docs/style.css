@@ -41,14 +41,21 @@ body {
 .brand { display: flex; align-items: center; gap: 9px; font-weight: 700; font-size: 17px; }
 
 .mark {
-  display: grid;
-  place-items: center;
-  width: 30px; height: 30px;
-  border-radius: 9px;
-  background: var(--primary);
-  color: #fff;
-  font-size: 16px;
+  width: auto; height: 30px;
+  display: block;
 }
+
+.auth-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.auth-head img { width: auto; height: 56px; display: block; }
+.auth-head .auth-name { color: var(--primary); font-weight: 700; font-size: 20px; }
+.auth-head h1 { margin: 2px 0 2px; }
+.auth-head .muted { margin: 0; }
 
 #main { padding: 16px; max-width: 720px; margin: 0 auto; }
 
