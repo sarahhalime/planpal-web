@@ -54,7 +54,22 @@
       <button class="tab" data-tab="balances" role="tab">Balances</button>
     </nav>
 
-    <div id="tab-expenses" class="tabpanel"></div>
+    <div id="tab-expenses" class="tabpanel">
+      <button id="add-toggle" class="ghost wide">+ Add expense</button>
+      <div id="add-form" class="card addform" hidden>
+        <label for="ex-name">What was it for?</label>
+        <input id="ex-name" placeholder="Dinner">
+        <label for="ex-amount">Amount</label>
+        <input id="ex-amount" type="number" inputmode="decimal" step="0.01" placeholder="42.50">
+        <label for="ex-payer">Who paid?</label>
+        <select id="ex-payer"></select>
+        <label>Split between</label>
+        <div id="ex-debtors" class="chips"></div>
+        <p id="ex-error" class="error" hidden></p>
+        <button id="ex-save" class="primary">Add expense</button>
+      </div>
+      <div id="expense-list"></div>
+    </div>
     <div id="tab-activities" class="tabpanel" hidden></div>
     <div id="tab-balances" class="tabpanel" hidden></div>
   </section>

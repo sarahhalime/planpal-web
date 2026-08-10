@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -16,13 +18,23 @@ import data_access.FileEventDataAccessObject;
 import data_access.SqliteSocialDataAccessObject;
 import data_access.SqliteUserDataAccessObject;
 import entity.Activity;
+import entity.CommonEventFactory;
+import entity.CommonExpenseFactory;
 import entity.Event;
 import entity.EventSummary;
 import entity.Expense;
+import use_case.add_expense.AddExpenseInputData;
+import use_case.add_expense.AddExpenseInteractor;
+import use_case.add_expense.AddExpenseOutputBoundary;
+import use_case.add_expense.AddExpenseOutputData;
 import use_case.login.LoginInputData;
 import use_case.login.LoginInteractor;
 import use_case.login.LoginOutputBoundary;
 import use_case.login.LoginOutputData;
+import use_case.pay_expense.PayExpenseInputData;
+import use_case.pay_expense.PayExpenseInteractor;
+import use_case.pay_expense.PayExpenseOutputBoundary;
+import use_case.pay_expense.PayExpenseOutputData;
 import use_case.who_owes_what.AttendeeBalanceOutputData;
 import use_case.who_owes_what.WhoOwesWhatInputData;
 import use_case.who_owes_what.WhoOwesWhatInteractor;
@@ -66,6 +78,12 @@ final class ApiHandler implements HttpHandler {
             }
             else if ("/api/event".equals(path)) {
                 this.event(exchange);
+            }
+            else if ("/api/expense/pay".equals(path)) {
+                this.payExpense(exchange);
+            }
+            else if ("/api/expense/add".equals(path)) {
+                this.addExpense(exchange);
             }
             else {
                 respond(exchange, NOT_FOUND, new JSONObject().put("error", "Unknown endpoint"));
@@ -137,6 +155,107 @@ final class ApiHandler implements HttpHandler {
         }
 
         respond(exchange, OK, eventJson(event));
+    }
+
+    /**
+     * Marks an expense as settled, using the same pay-expense interactor as the desktop app.
+     *
+     * @param exchange the request
+     * @throws IOException when the response cannot be written
+     */
+    private void payExpense(HttpExchange exchange) throws IOException {
+        final JSONObject request = readJson(exchange);
+        final int eventId = request.optInt("eventId", -1);
+        final int expenseId = request.optInt("expenseId", -1);
+
+        if (eventId < 0 || expenseId < 0) {
+            respond(exchange, BAD_REQUEST,
+                    new JSONObject().put("error", "An event id and expense id are required."));
+            return;
+        }
+
+        final Captured captured = new Captured();
+        new PayExpenseInteractor(this.eventDataAccess, new PayExpenseOutputBoundary() {
+            @Override
+            public void prepareSuccessView(PayExpenseOutputData outputData) {
+                captured.ok = true;
+            }
+
+            @Override
+            public void prepareFailView(String errorMessage) {
+                captured.error = errorMessage;
+            }
+        }).execute(new PayExpenseInputData(eventId, expenseId));
+
+        this.respondToWrite(exchange, captured, eventId);
+    }
+
+    /**
+     * Adds an expense, splitting it equally between the chosen debtors.
+     *
+     * @param exchange the request
+     * @throws IOException when the response cannot be written
+     */
+    private void addExpense(HttpExchange exchange) throws IOException {
+        final JSONObject request = readJson(exchange);
+        final int eventId = request.optInt("eventId", -1);
+        final String name = request.optString("name", "").trim();
+        final String payer = request.optString("payer", "").trim();
+        final double amount = request.optDouble("amount", 0.0);
+        final Set<String> debtors = new LinkedHashSet<>();
+
+        for (final Object debtor : request.optJSONArray("debtors") == null
+                ? new JSONArray() : request.getJSONArray("debtors")) {
+            debtors.add(String.valueOf(debtor));
+        }
+
+        if (eventId < 0 || name.isEmpty() || payer.isEmpty() || amount <= 0 || debtors.isEmpty()) {
+            respond(exchange, BAD_REQUEST, new JSONObject().put(
+                    "error", "A name, payer, positive amount and at least one person are required."));
+            return;
+        }
+
+        final Captured captured = new Captured();
+        new AddExpenseInteractor(this.eventDataAccess, new AddExpenseOutputBoundary() {
+            @Override
+            public void prepareSuccessView(AddExpenseOutputData outputData) {
+                captured.ok = true;
+            }
+
+            @Override
+            public void prepareFailView(String errorMessage) {
+                captured.error = errorMessage;
+            }
+        }, new CommonExpenseFactory(), new CommonEventFactory())
+                .execute(new AddExpenseInputData(
+                        eventId, name, payer, amount, false, debtors, Map.of()));
+
+        this.respondToWrite(exchange, captured, eventId);
+    }
+
+    /**
+     * Returns the refreshed event after a write, so the client redraws from stored state
+     * rather than guessing what changed.
+     *
+     * @param exchange the request
+     * @param captured what the interactor reported
+     * @param eventId the event that was written to
+     * @throws IOException when the response cannot be written
+     */
+    private void respondToWrite(HttpExchange exchange, Captured captured, int eventId)
+            throws IOException {
+        if (captured.error != null) {
+            respond(exchange, BAD_REQUEST, new JSONObject().put("error", captured.error));
+        }
+        else {
+            try {
+                respond(exchange, OK, eventJson(this.eventDataAccess.getEvent(eventId)));
+            }
+            catch (final Exception exception) {
+                respond(exchange, SERVER_ERROR,
+                        new JSONObject().put("error", "Saved, but the event could not be reloaded."));
+            }
+        }
     }
 
     private JSONObject eventJson(Event event) {
@@ -267,6 +386,12 @@ final class ApiHandler implements HttpHandler {
         try (OutputStream out = exchange.getResponseBody()) {
             out.write(bytes);
         }
+    }
+
+    /** Captures whether a writing interactor succeeded, and why it did not. */
+    private static final class Captured {
+        private boolean ok;
+        private String error;
     }
 
     /** Captures whatever the login interactor reports. */

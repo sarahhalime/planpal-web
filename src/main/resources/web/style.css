@@ -168,6 +168,47 @@ button { font-family: inherit; font-size: 15px; cursor: pointer; }
 
 .empty { color: var(--muted); font-size: 14px; padding: 18px; text-align: center; }
 
+.wide { width: 100%; padding: 12px; margin-bottom: 12px; }
+.addform { margin-bottom: 14px; }
+
+select {
+  width: 100%;
+  font-size: 16px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--text);
+}
+
+.chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.chip {
+  padding: 8px 13px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 600;
+}
+.chip.on { background: var(--primary); border-color: var(--primary); color: #fff; }
+
+.pay {
+  align-self: center;
+  padding: 7px 13px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--primary);
+  font-size: 13px;
+  font-weight: 700;
+}
+.pay[disabled] { opacity: .5; }
+
+@media (prefers-color-scheme: dark) {
+  select { background: #12161c; color: var(--text); }
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --page: #12161c; --card: #1a1f27; --text: #e8ecf2; --muted: #97a1b2;
