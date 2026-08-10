@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import use_case.event_map.EventMapException;
@@ -129,6 +130,8 @@ public final class NominatimEventMapGateway implements EventMapGateway {
 
     /**
      * Keeps to Nominatim's one-request-a-second usage policy.
+     *
+     * @throws InterruptedException when the wait is interrupted
      */
     private void waitForNextSlot() throws InterruptedException {
         final long since = System.currentTimeMillis() - this.lastRequestAt;
@@ -159,11 +162,11 @@ public final class NominatimEventMapGateway implements EventMapGateway {
                 final JSONObject first = results.getJSONObject(0);
                 coordinates = new double[] {
                     Double.parseDouble(first.getString("lat")),
-                    Double.parseDouble(first.getString("lon"))
+                    Double.parseDouble(first.getString("lon")),
                 };
             }
         }
-        catch (final IOException | RuntimeException exception) {
+        catch (final IOException | JSONException | NumberFormatException exception) {
             coordinates = null;
         }
         catch (final InterruptedException exception) {

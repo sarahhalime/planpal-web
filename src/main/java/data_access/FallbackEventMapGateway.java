@@ -39,7 +39,7 @@ public final class FallbackEventMapGateway implements EventMapGateway {
         try {
             result = this.preferred.renderMap(locations);
         }
-        catch (final EventMapException | RuntimeException exception) {
+        catch (final EventMapException exception) {
             result = this.fallback.renderMap(locations);
         }
         return result;
