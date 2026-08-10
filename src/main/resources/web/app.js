@@ -342,9 +342,11 @@ function sumOwed(event) {
     .reduce((total, b) => total + Math.abs(b.amount), 0);
 }
 
+// The image goes inside the circle rather than being the circle, so the shared
+// `.avatar img` rule can crop it with object-fit instead of squashing it.
 function avatarHtml(picture, name) {
   return picture
-    ? `<img class="avatar small" src="data:image/png;base64,${picture}" alt="">`
+    ? `<span class="avatar small"><img src="data:image/png;base64,${picture}" alt=""></span>`
     : `<span class="avatar small initial">${escapeHtml((name || '?')[0].toUpperCase())}</span>`;
 }
 
