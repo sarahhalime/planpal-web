@@ -10,8 +10,10 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 import data_access.EnvConfig;
+import data_access.FallbackEventMapGateway;
 import data_access.FileEventDataAccessObject;
 import data_access.JsonEventFileDataAccessObject;
+import data_access.NominatimEventMapGateway;
 import data_access.OpenStreetMapEventMapGateway;
 import data_access.SqliteSocialDataAccessObject;
 import data_access.SqliteUserDataAccessObject;
@@ -424,8 +426,10 @@ final class TripApiHandler implements HttpHandler {
         final int eventId = Integer.parseInt(Json.query(exchange, "id"));
 
         new EventMapInteractor(this.eventDataAccess::getEvent,
-                new OpenStreetMapEventMapGateway(
-                        EnvConfig.get("GOOGLE_MAPS_API_KEY", "google.maps.api.key")),
+                new FallbackEventMapGateway(
+                        new OpenStreetMapEventMapGateway(
+                                EnvConfig.get("GOOGLE_MAPS_API_KEY", "google.maps.api.key")),
+                        new NominatimEventMapGateway()),
                 new EventMapOutputBoundary() {
                     @Override
                     public void prepareSuccessView(EventMapOutputData outputData) {

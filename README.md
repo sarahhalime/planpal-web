@@ -83,5 +83,7 @@ the browser holds the signed-in user in memory for the page's lifetime, so this 
 front end, not something to point at real accounts. Anything the container writes is lost
 on redeploy.
 
-The event map depends on the Google Places quota; when it is exhausted the panel says so
-and the rest of the dashboard is unaffected.
+The event map prefers Google, but Google Maps Platform refuses every request unless billing
+is enabled on the Cloud project. When that happens it falls back to Nominatim, OpenStreetMap's
+own geocoder, which needs no key. The browser draws the map itself from an OpenStreetMap
+embed, so the map works on a deployment with no Google account at all.
