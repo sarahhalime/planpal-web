@@ -43,20 +43,32 @@
 
   <section id="event-screen" class="screen" hidden>
     <button id="back" class="link back">‹ All trips</button>
-    <h1 id="event-name"></h1>
-    <p class="muted" id="event-meta"></p>
 
-    <div class="stats" id="stats"></div>
+    <!-- Panels stack in the same order the desktop dashboard reads:
+         header, budget summary, activities, expenses, who owes what. -->
 
-    <nav class="tabs" role="tablist">
-      <button class="tab active" data-tab="expenses" role="tab">Expenses</button>
-      <button class="tab" data-tab="activities" role="tab">Schedule</button>
-      <button class="tab" data-tab="balances" role="tab">Balances</button>
-    </nav>
+    <div class="card panel" id="event-header">
+      <h1 id="event-name"></h1>
+      <p class="detail" id="event-description"></p>
+      <p class="detail" id="event-location"></p>
+      <p class="detail" id="event-dates"></p>
+    </div>
 
-    <div id="tab-expenses" class="tabpanel">
-      <button id="add-toggle" class="ghost wide">+ Add expense</button>
-      <div id="add-form" class="card addform" hidden>
+    <div class="card panel">
+      <div class="stats" id="stats"></div>
+    </div>
+
+    <div class="card panel">
+      <h2 class="panel-title">Activities</h2>
+      <div id="activity-list"></div>
+    </div>
+
+    <div class="card panel">
+      <div class="panel-head">
+        <h2 class="panel-title">Expenses</h2>
+        <button id="add-toggle" class="add" aria-label="Add expense">+</button>
+      </div>
+      <div id="add-form" class="addform" hidden>
         <label for="ex-name">What was it for?</label>
         <input id="ex-name" placeholder="Dinner">
         <label for="ex-amount">Amount</label>
@@ -70,8 +82,12 @@
       </div>
       <div id="expense-list"></div>
     </div>
-    <div id="tab-activities" class="tabpanel" hidden></div>
-    <div id="tab-balances" class="tabpanel" hidden></div>
+
+    <div class="card panel">
+      <h2 class="panel-title">Who Owes What</h2>
+      <p class="detail">Current balances by attendee.</p>
+      <div id="balance-list"></div>
+    </div>
   </section>
 
 </main>

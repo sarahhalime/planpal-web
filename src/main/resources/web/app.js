@@ -110,33 +110,23 @@ function renderEvents() {
 
 el('back').addEventListener('click', () => show('events-screen'));
 
-document.querySelectorAll('.tab').forEach((tab) => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach((t) => t.classList.remove('active'));
-    tab.classList.add('active');
-    ['expenses', 'activities', 'balances'].forEach((name) => {
-      el('tab-' + name).hidden = (name !== tab.dataset.tab);
-    });
-  });
-});
-
 async function openEvent(eventId) {
   show('event-screen');
   el('event-name').textContent = 'Loading…';
-  el('event-meta').textContent = '';
+  ['event-description', 'event-location', 'event-dates'].forEach((id) => {
+    el(id).textContent = '';
+  });
   el('stats').innerHTML = '';
-  // Clear the lists, not the whole panel: the add-expense form lives in there too.
   el('expense-list').innerHTML = '';
-  el('tab-activities').innerHTML = '';
-  el('tab-balances').innerHTML = '';
+  el('activity-list').innerHTML = '';
+  el('balance-list').innerHTML = '';
   el('add-form').hidden = true;
-  el('add-toggle').textContent = '+ Add expense';
 
   try {
     renderEvent(await api(`/api/event?id=${encodeURIComponent(eventId)}`));
   } catch (e) {
     el('event-name').textContent = 'Could not load that trip';
-    el('event-meta').textContent = e.message;
+    el('event-description').textContent = e.message;
   }
 }
 
@@ -145,43 +135,85 @@ function renderEvent(event) {
   const currency = event.currency;
 
   el('event-name').textContent = event.eventName;
-  el('event-meta').textContent =
-    [event.location, event.startDate && `${event.startDate} → ${event.endDate || ''}`.trim()]
-      .filter(Boolean).join(' · ');
+  el('event-description').textContent = event.description || '';
+  el('event-location').textContent = event.location ? `Location: ${event.location}` : '';
+  el('event-dates').textContent = event.startDate
+    ? `Date: ${event.startDate}${event.endDate ? ` to ${event.endDate}` : ''}` : '';
 
+  // Same four tiles and wording as the desktop budget summary.
   const remaining = (event.budget || 0) - (event.spent || 0);
+  const owing = event.balances.filter((b) => balanceWording(b.status) === 'Owes').length;
+  const percentLeft = event.budget ? Math.round((remaining / event.budget) * 100) : 0;
+  const count = event.expenses.length;
   el('stats').innerHTML = `
-    <div class="stat"><span>Budget</span><b>${money(event.budget, currency)}</b></div>
-    <div class="stat"><span>Spent</span><b>${money(event.spent, currency)}</b></div>
-    <div class="stat"><span>Remaining</span><b class="${remaining < 0 ? 'owes' : 'gets'}">${money(remaining, currency)}</b></div>
-    <div class="stat"><span>People</span><b>${event.attendees.length}</b></div>`;
+    <div class="stat"><span>TOTAL BUDGET</span><b>${money(event.budget, currency)}</b>
+      <em>${event.budget ? 'Event budget' : 'No budget set'}</em></div>
+    <div class="stat"><span>TOTAL SPENT</span><b>${money(event.spent, currency)}</b>
+      <em>${count} ${count === 1 ? 'expense' : 'expenses'}</em></div>
+    <div class="stat"><span>REMAINING</span><b class="${remaining < 0 ? 'owes' : 'gets'}">${money(remaining, currency)}</b>
+      <em>${percentLeft < 0 ? `${Math.abs(percentLeft)}% over budget` : `${percentLeft}% of budget left`}</em></div>
+    <div class="stat"><span>UNSETTLED DEBTS</span><b>${owing ? money(sumOwed(event), currency) : money(0, currency)}</b>
+      <em>${owing === 1 ? '1 person owes' : `${owing} people owe`}</em></div>`;
 
   renderExpenses(event);
   renderAddForm(event);
 
-  el('tab-activities').innerHTML = event.activities.length
+  el('activity-list').innerHTML = event.activities.length
     ? event.activities.map((activity) => `<div class="row">
           <div>
             <div>${escapeHtml(activity.name)}</div>
             <div class="who">${escapeHtml(activity.location || '')}</div>
           </div>
-          <div class="amount">${escapeHtml(activity.date || '')}<small>${escapeHtml(activity.time || '')}</small></div>
+          <div class="amount">${escapeHtml(prettyDate(activity.date))}<small>${escapeHtml(prettyTime(activity.time))}</small></div>
         </div>`).join('')
     : '<p class="empty">Nothing scheduled yet.</p>';
 
-  el('tab-balances').innerHTML = event.balances.length
+  el('balance-list').innerHTML = event.balances.length
     ? event.balances.map((balance) => {
-        const owes = String(balance.status).toLowerCase().includes('owe');
+        const wording = balanceWording(balance.status);
+        const owes = wording === 'Owes';
         return `<div class="row">
             <div>${escapeHtml(balance.name)}</div>
-            <div class="amount ${owes ? 'owes' : 'gets'}">${money(Math.abs(balance.amount), currency)}
-              <small>${escapeHtml(balance.status)}</small></div>
+            <div class="amount ${owes ? 'owes' : 'gets'}">${escapeHtml(wording)} ${money(Math.abs(balance.amount), currency)}</div>
           </div>`;
       }).join('')
     : '<p class="empty">Everyone is settled up.</p>';
 }
 
 /* ------------------------------------------------------- expenses: write */
+
+// The desktop shows "Owes"/"Gets back", not the raw status the interactor returns.
+function balanceWording(status) {
+  return String(status).toLowerCase().includes('owe') && !String(status).toLowerCase().includes('is_owed')
+    ? 'Owes' : 'Gets back';
+}
+
+// "2026-07-03" -> "Jul 3, 2026", matching the desktop tables.
+function prettyDate(iso) {
+  if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) {
+    return iso || '';
+  }
+  const [y, m, d] = iso.split('-').map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString('en-US',
+    { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+// "14:00" -> "2:00 PM"
+function prettyTime(value) {
+  if (!value || !/^\d{1,2}:\d{2}$/.test(value)) {
+    return value || '';
+  }
+  const [h, min] = value.split(':').map(Number);
+  const suffix = h >= 12 ? 'PM' : 'AM';
+  const hour = h % 12 === 0 ? 12 : h % 12;
+  return `${hour}:${String(min).padStart(2, '0')} ${suffix}`;
+}
+
+function sumOwed(event) {
+  return event.balances
+    .filter((b) => balanceWording(b.status) === 'Owes')
+    .reduce((total, b) => total + Math.abs(b.amount), 0);
+}
 
 function renderExpenses(event) {
   const list = el('expense-list');
@@ -253,7 +285,7 @@ function renderAddForm(event) {
 el('add-toggle').addEventListener('click', () => {
   const form = el('add-form');
   form.hidden = !form.hidden;
-  el('add-toggle').textContent = form.hidden ? '+ Add expense' : 'Cancel';
+  el('add-toggle').textContent = form.hidden ? '+' : '×';
 });
 
 el('ex-save').addEventListener('click', async () => {
@@ -280,7 +312,7 @@ el('ex-save').addEventListener('click', async () => {
     el('ex-name').value = '';
     el('ex-amount').value = '';
     el('add-form').hidden = true;
-    el('add-toggle').textContent = '+ Add expense';
+    el('add-toggle').textContent = '+';
     renderEvent(updated);
   } catch (e) {
     error.textContent = e.message;

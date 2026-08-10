@@ -1,14 +1,16 @@
+/* Taken from PlanPalTheme so the web client matches the desktop app exactly. */
 :root {
-  --primary: #33578f;
-  --primary-light: #e8eef7;
-  --page: #f4f6f8;
-  --card: #ffffff;
-  --text: #1d2430;
-  --muted: #6b7688;
-  --border: #e2e6ec;
-  --good: #1f7a4d;
-  --owe: #b4531b;
-  --danger: #c0392b;
+  --primary: rgb(48, 99, 153);        /* PlanPalTheme.PRIMARY */
+  --primary-light: rgb(235, 243, 251);/* PRIMARY_LIGHT */
+  --page: rgb(246, 247, 249);         /* PAGE_BACKGROUND */
+  --card: #ffffff;                    /* CARD_BACKGROUND */
+  --text: rgb(25, 29, 35);            /* TEXT_PRIMARY */
+  --secondary: rgb(105, 113, 124);    /* TEXT_SECONDARY */
+  --muted: rgb(139, 146, 155);        /* TEXT_MUTED */
+  --border: rgb(218, 222, 227);       /* BORDER */
+  --good: rgb(24, 128, 74);           /* SUCCESS */
+  --owe: rgb(190, 78, 11);            /* WARNING */
+  --danger: rgb(190, 45, 45);         /* ERROR */
   --radius: 14px;
 }
 
@@ -125,23 +127,29 @@ button { font-family: inherit; font-size: 15px; cursor: pointer; }
 .event span { color: var(--muted); font-size: 13px; }
 
 /* Stats */
-.stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 14px 0 18px; }
-.stat { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; }
-.stat b { display: block; font-size: 19px; }
-.stat span { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+.stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.stat { padding: 2px; }
+.stat b { display: block; font-size: 18px; margin: 2px 0 1px; }
+.stat em { display: block; font-style: normal; color: var(--muted); font-size: 11px; }
+.stat span { color: var(--secondary); font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
 
-/* Tabs */
-.tabs { display: flex; gap: 6px; margin-bottom: 14px; }
-.tab {
-  flex: 1;
-  padding: 10px 6px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: var(--card);
-  color: var(--muted);
-  font-weight: 600;
+/* Dashboard panels, stacked in the desktop's reading order */
+.panel { margin-bottom: 14px; padding: 16px; }
+.panel-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.panel-title { font-size: 17px; font-weight: 700; margin: 0 0 4px; }
+.detail { color: var(--secondary); font-size: 13px; margin: 0 0 4px; padding-left: 6px; }
+#event-header h1 { margin-bottom: 8px; }
+
+.add {
+  flex: 0 0 auto;
+  width: 34px; height: 34px;
+  border: none;
+  border-radius: 9px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 19px;
+  line-height: 1;
 }
-.tab.active { background: var(--primary-light); color: var(--primary); border-color: var(--primary); }
 
 /* Rows */
 .row {
@@ -149,12 +157,10 @@ button { font-family: inherit; font-size: 15px; cursor: pointer; }
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 13px 15px;
-  margin-bottom: 8px;
+  padding: 12px 2px;
+  border-bottom: 1px solid var(--border);
 }
+.row:last-child { border-bottom: none; }
 .row .who { font-size: 13px; color: var(--muted); margin-top: 2px; }
 .row .amount { text-align: right; white-space: nowrap; font-weight: 600; }
 .row .amount small { display: block; font-weight: 400; color: var(--muted); font-size: 12px; }
@@ -169,7 +175,7 @@ button { font-family: inherit; font-size: 15px; cursor: pointer; }
 .empty { color: var(--muted); font-size: 14px; padding: 18px; text-align: center; }
 
 .wide { width: 100%; padding: 12px; margin-bottom: 12px; }
-.addform { margin-bottom: 14px; }
+.addform { border-bottom: 1px solid var(--border); padding-bottom: 16px; margin-bottom: 6px; }
 
 select {
   width: 100%;
@@ -204,16 +210,3 @@ select {
   font-weight: 700;
 }
 .pay[disabled] { opacity: .5; }
-
-@media (prefers-color-scheme: dark) {
-  select { background: #12161c; color: var(--text); }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --page: #12161c; --card: #1a1f27; --text: #e8ecf2; --muted: #97a1b2;
-    --border: #2a313b; --primary-light: #22304a;
-  }
-  input { background: #12161c; color: var(--text); }
-  .ghost { background: #12161c; }
-}
