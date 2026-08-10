@@ -1,0 +1,12 @@
+target/
+
+# Local configuration and credentials. Never commit these.
+.env
+*.env
+
+# Local application data: real user rows, password hashes, profile photos.
+PlanPalDatabase/
+
+.idea/
+*.iml
+.DS_Store
